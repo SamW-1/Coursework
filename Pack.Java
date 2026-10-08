@@ -21,8 +21,10 @@ public class Pack {
         deckList = new Deck[n];
         for (int i = 0; i < n; i++) { deckList[i] = new Deck(); }
 
+        // CURRENTLY WORKING ON DISTRIBUTING CARDS TO PLAYERS
+        //  in a round robin order (p1, p2, p3, p4) until each player has 4 cards
         for (int i = 0; i < n * 4; i++;) {
-            
+            deckList[i % n]
         }
     }
 }
