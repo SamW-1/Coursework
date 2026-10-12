@@ -9,6 +9,12 @@ public class CardGame {
         System.out.println("Please enter the number of players:");
         int playerCount = Integer.parseInt(sc.nextLine());
 
+        // Initialise n player objects
+        Player[] players = new Player[playerCount];
+        for (int i = 0; i < playerCount; i++) {
+            players[i] = new Player();
+        }
+
         System.out.println("Enter the location of a pack to load:");
         String filename = sc.nextLine();
 

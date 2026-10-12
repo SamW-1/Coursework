@@ -1,13 +1,14 @@
-import java.util.ArrayList;
+import java.util.PriorityQueue;
+import java.util.Queue;
 public class Deck { 
     private static int totalIDs = 0;
-    private ArrayList<Card> cardList;
+    private Queue<Card> cardQueue;
     private int id;
 
     public Deck() {
-        cardList = new ArrayList<>();
+        cardQueue = new PriorityQueue<>();
         id = totalIDs;
         totalIDs++;
     }
-    public void addCard(Card card) { cardList.add(card); }
+    public void addCard(Card card) { cardQueue.add(card); }
 }
