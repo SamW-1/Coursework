@@ -16,4 +16,11 @@ public class Player {
     public void discard() {
         // Implement logic to decide and discard the correct card
     }
+    public void printCards() {
+        for (int i = 0; i < hand.size(); i++) {
+            System.out.print(hand.get(i).getValue());
+            System.out.print(' ');
+        }
+        System.out.println();
+    }
 }

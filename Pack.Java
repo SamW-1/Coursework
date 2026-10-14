@@ -14,7 +14,7 @@ public class Pack {
     }
     public void printCards() {
         for (int i = 0; i < cardList.size(); i++) {
-            System.out.println(cardList.get(i));
+            System.out.println(cardList.get(i).getValue());
         }
     }
     public void distribute(Player[] ps) {
@@ -29,15 +29,28 @@ public class Pack {
         }
 
         // After the players' hands have been filled, fill the decks
-        for (int i = 0; i < n * 4; i++) {
+        int i = 0;
+        while (!cardList.isEmpty()) {
             deckList[i % n].addCard(cardList.remove(0));
+            i++;
         }
-
     }
     public static void main(String[] args) {
         Pack demo = new Pack();
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 40; i++) {
             demo.addCard(new Card(i));
+        }
+
+        Player[] pl = new Player[4];
+        pl[0] = new Player();
+        pl[1] = new Player();
+        pl[2] = new Player();
+        pl[3] = new Player();
+
+        demo.distribute(pl);
+        
+        for (int i = 0; i < 4; i++) {
+            pl[i].printCards();
         }
     }
 }
