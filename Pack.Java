@@ -17,7 +17,7 @@ public class Pack {
             System.out.println(cardList.get(i).getValue());
         }
     }
-    public void distribute(Player[] ps) {
+    public Deck[] distribute(Player[] ps) {
         int n = ps.length;
         deckList = new Deck[n];
         for (int i = 0; i < n; i++) { deckList[i] = new Deck(); }
@@ -34,6 +34,8 @@ public class Pack {
             deckList[i % n].addCard(cardList.remove(0));
             i++;
         }
+
+        return deckList;
     }
     public static void main(String[] args) {
         Pack demo = new Pack();
