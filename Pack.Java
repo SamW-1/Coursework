@@ -17,10 +17,9 @@ public class Pack {
             System.out.println(cardList.get(i).getValue());
         }
     }
-    public Deck[] distribute(Player[] ps) {
+    public void distribute(Player[] ps, Deck[] deckList) {
         int n = ps.length;
-        deckList = new Deck[n];
-        for (int i = 0; i < n; i++) { deckList[i] = new Deck(); }
+        
 
         // CURRENTLY WORKING ON DISTRIBUTING CARDS TO PLAYERS
         //  in a round robin order (p1, p2, p3, p4) until each player has 4 cards
@@ -34,25 +33,23 @@ public class Pack {
             deckList[i % n].addCard(cardList.remove(0));
             i++;
         }
-
-        return deckList;
     }
-    public static void main(String[] args) {
-        Pack demo = new Pack();
-        for (int i = 0; i < 40; i++) {
-            demo.addCard(new Card(i));
-        }
+    // public static void main(String[] args) {
+    //     Pack demo = new Pack();
+    //     for (int i = 0; i < 40; i++) {
+    //         demo.addCard(new Card(i));
+    //     }
 
-        Player[] pl = new Player[4];
-        pl[0] = new Player();
-        pl[1] = new Player();
-        pl[2] = new Player();
-        pl[3] = new Player();
+    //     Player[] pl = new Player[4];
+    //     pl[0] = new Player();
+    //     pl[1] = new Player();
+    //     pl[2] = new Player();
+    //     pl[3] = new Player();
 
-        demo.distribute(pl);
+    //     demo.distribute(pl);
         
-        for (int i = 0; i < 4; i++) {
-            pl[i].printCards();
-        }
-    }
+    //     for (int i = 0; i < 4; i++) {
+    //         pl[i].printCards();
+    //     }
+    // }
 }

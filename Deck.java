@@ -10,7 +10,7 @@ public class Deck {
         id = totalIDs;
         totalIDs++;
     }
-    public void addCard(Card card) { cardQueue.add(card); }
+    public synchronized void addCard(Card card) { cardQueue.add(card); }
 
     public Card drawCard() { return cardQueue.poll(); }
 
