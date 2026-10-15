@@ -19,11 +19,12 @@ public class CardGame {
         String filename = sc.nextLine();
 
         Pack pack = new Pack();
-        try (BufferedReader input = new BufferedReader(new FileReader(filename))) {
+        try {  
+            // Error handling here needs to be completed: So that invalid file input exceptions are properly handled
+            BufferedReader input = new BufferedReader(new FileReader(filename));
             String line = input.readLine();
 
             while (line != null) {
-                System.out.println(line);
                 Card c = new Card(Integer.parseInt(line));
                 pack.addCard(c);
                 
@@ -31,13 +32,21 @@ public class CardGame {
             }
 
             input.close();
-        } catch (IOException e) {
-            System.out.println("Error reading file.");
-        }
 
         // Distribute cards from the top of the pack in a round robin fashion to the players and decks
         Deck[] decks = pack.distribute(players);
 
+        // Begin player threads, creating an output file for each individual player
+
+
+        } catch (IOException e) {
+            System.out.println("Error: File not found.");
+        } catch (NumberFormatException e) {
+            System.out.println("Error: Invalid file contents");
+        }
+
         
+
+
     }
 }
