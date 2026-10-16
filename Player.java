@@ -35,7 +35,8 @@ public class Player implements Runnable{
         }
         System.out.println();
     }
-
+    public ArrayList<Card> getHand() { return hand; } 
+    
     @Override
     public void run() {
         try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter("player" + id + ".txt", true))) {
@@ -56,6 +57,7 @@ public class Player implements Runnable{
                 hand.add(drawnCard);
                 if (drawnCard.getValue() != id+1) { nonDenominationCards.add(drawnCard); }
                 
+
                 // Discard to the right
                 for (int i = 0; i < hand.size(); i++) {
                     if (hand.get(i).equals(nonDenominationCards.peek())) 
