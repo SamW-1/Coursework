@@ -8,19 +8,20 @@ import java.util.Queue;
 public class Player implements Runnable{
     private static int totalIDs;
     private final int id;
-    private ArrayList<Card> hand;
-    private Deck leftDeck;
-    private Deck rightDeck;
-    private Queue<Card> nonDenominationCards;
+    private final ArrayList<Card> hand;
+    private final Deck leftDeck;
+    private final Deck rightDeck;
+    private final Queue<Card> nonDenominationCards;
 
     public Player(Deck left, Deck right) {
-        hand = new ArrayList<Card>();
+        hand = new ArrayList<>();
         nonDenominationCards = new ArrayDeque<>();
         id = totalIDs;
         totalIDs++;
         leftDeck = left;
         rightDeck = right;
     }
+    public int getID() { return id; }
     public void addCard(Card c) {
         hand.add(c);
         if (c.getValue() != id+1) { nonDenominationCards.add(c); }
@@ -39,7 +40,7 @@ public class Player implements Runnable{
     
     @Override
     public void run() {
-        try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter("player" + id + ".txt", true))) {
+        try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter("player" + (id+1) + ".txt", true))) {
             /** 
              * If a player starts with a winning hand, the game is over
              * 
@@ -56,16 +57,26 @@ public class Player implements Runnable{
                 Card drawnCard = leftDeck.drawCard();
                 hand.add(drawnCard);
                 if (drawnCard.getValue() != id+1) { nonDenominationCards.add(drawnCard); }
-                
+                bufferedWriter.write("player " + (id+1) + " draws a " + drawnCard.getValue() + " from deck " + (leftDeck.getID()+1));
+                bufferedWriter.newLine();
+
 
                 // Discard to the right
                 for (int i = 0; i < hand.size(); i++) {
                     if (hand.get(i).equals(nonDenominationCards.peek())) 
                     { 
                         rightDeck.addCard(nonDenominationCards.poll()); 
-                        hand.remove(i);
+                        Card r = hand.remove(i);
+                        bufferedWriter.write("player " + (id+1) + " discards a " + r.getValue() + " to deck " + (rightDeck.getID()+1));
+                        bufferedWriter.newLine();
+                        
+                        break;
                     }
                 }
+
+                // Output current hand 
+                bufferedWriter.write("player " + (id+1) + " current hand is " + hand.get(0).getValue() + " " + hand.get(1).getValue() + " " + hand.get(2).getValue() + " " + hand.get(3).getValue());
+
             }
 
         } catch (IOException e) {

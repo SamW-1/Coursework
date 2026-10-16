@@ -3,13 +3,15 @@ import java.util.Queue;
 public class Deck { 
     private static int totalIDs = 0;
     private Queue<Card> cardQueue;
-    private int id;
+    private final int id;
 
     public Deck() {
         cardQueue = new ArrayDeque<>();
         id = totalIDs;
         totalIDs++;
     }
+    public int getID() { return id; }
+
     public synchronized void addCard(Card card) { cardQueue.add(card); }
 
     public Card drawCard() { return cardQueue.poll(); }

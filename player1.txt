@@ -1,1 +1,4 @@
 player 1 initial hand 3 2 9 4
+player 1 draws a 7 from deck 1
+player 1 discards a 3 to deck 2
+player 1 current hand is 2 9 4 7

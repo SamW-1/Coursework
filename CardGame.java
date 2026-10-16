@@ -66,8 +66,11 @@ public class CardGame {
         }
 
         // Begin player threads, creating an output file for each individual player
-        for (Player player : players) {
-            System.out.println("Testing");
+        ArrayList<Thread> threads = new ArrayList<>();
+        for (Player p : players) {
+            Thread thread = new Thread (p, "Player-" + p.getID());
+            threads.add(thread);
+            thread.start();
         }
 
 

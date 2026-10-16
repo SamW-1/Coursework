@@ -1,1 +1,4 @@
 player 3 initial hand 6 7 2 3
+player 3 draws a 9 from deck 3
+player 3 discards a 6 to deck 4
+player 3 current hand is 7 2 3 9

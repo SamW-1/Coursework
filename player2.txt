@@ -1,1 +1,4 @@
 player 2 initial hand 4 5 1 2
+player 2 draws a 8 from deck 2
+player 2 discards a 4 to deck 3
+player 2 current hand is 5 1 2 8
