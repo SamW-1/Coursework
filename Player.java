@@ -23,6 +23,7 @@ public class Player implements Runnable{
     }
     public void addCard(Card c) {
         hand.add(c);
+        if (c.getValue() != id+1) { nonDenominationCards.add(c); }
     }
     public void discard() {
         // Implement logic to decide and discard the correct card
@@ -57,7 +58,11 @@ public class Player implements Runnable{
                 
                 // Discard to the right
                 for (int i = 0; i < hand.size(); i++) {
-                    if (hand.get(i).equals(nonDenominationCards.peek())) { rightDeck.addCard(nonDenominationCards.poll()); }
+                    if (hand.get(i).equals(nonDenominationCards.peek())) 
+                    { 
+                        rightDeck.addCard(nonDenominationCards.poll()); 
+                        hand.remove(i);
+                    }
                 }
             }
 
