@@ -28,7 +28,6 @@ public class CardGame {
         Player[] players = new Player[playerCount];
         for (int i = 0; i < playerCount; i++) {
             players[i] = new Player(deckList[i], deckList[(i+1) % playerCount]);
-            System.out.println("Left: " + i + " Right: " + (i+1) % playerCount);
         }
 
         
@@ -55,9 +54,9 @@ public class CardGame {
         
         // Initialise player text files 
         for (int i = 0; i < playerCount; i++) {
-            try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter("player" + i+1 + ".txt"))) {
+            try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter("player" + (i+1) + ".txt"))) {
                 ArrayList<Card> initialHand = players[i].getHand();
-                bufferedWriter.write("player " + i+1 + " initial hand " + initialHand.get(0) + " " + initialHand.get(1) + " " + initialHand.get(2) + " " + initialHand.get(3));
+                bufferedWriter.write("player " + (i+1) + " initial hand " + initialHand.get(0).getValue() + " " + initialHand.get(1).getValue() + " " + initialHand.get(2).getValue() + " " + initialHand.get(3).getValue());
                 bufferedWriter.newLine();
 
                 bufferedWriter.close();
