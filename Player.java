@@ -13,6 +13,7 @@ public class Player implements Runnable{
     private final Deck rightDeck;
     private final Queue<Card> nonDenominationCards;
     public static Boolean gameOver = false;
+    public static Player winningPlayer;
     private Boolean pWon = false;
 
     public Player(Deck left, Deck right) {
@@ -53,9 +54,8 @@ public class Player implements Runnable{
              * Implement using a while loop which carries out player actions unless the player has a winning hand (or the thread is stopped otherwise)
              */
             
-            pWon = hand.get(0) != hand.get(1) || hand.get(1) != hand.get(2) || hand.get(2) != hand.get(3) || hand.get(3) != hand.get(4);
+            pWon = hand.get(0) == hand.get(1) && hand.get(1) == hand.get(2) && hand.get(2) == hand.get(3) && hand.get(3) == hand.get(4);
             while (!gameOver && !pWon) {
-                
                 // Draw from left
                 // If the drawn card is not of the same value as the player, it is added to the Queue of cards that can be discarded
                 Card drawnCard = leftDeck.drawCard();
@@ -80,6 +80,7 @@ public class Player implements Runnable{
 
                 // Output current hand 
                 bufferedWriter.write("player " + (id+1) + " current hand is " + hand.get(0).getValue() + " " + hand.get(1).getValue() + " " + hand.get(2).getValue() + " " + hand.get(3).getValue());
+                System.out.println("player " + (id+1) + " current hand is " + hand.get(0).getValue() + " " + hand.get(1).getValue() + " " + hand.get(2).getValue() + " " + hand.get(3).getValue());
 
             }
 
@@ -87,7 +88,17 @@ public class Player implements Runnable{
              * Case where current player wins
              * Break out of current loop and inform other threads that the game is over
              */
+            if (pWon) {
+                winningPlayer = this;
+                gameOver = true;
 
+                bufferedWriter.write("player " + (id+1) + " wins");
+                bufferedWriter.newLine();
+                bufferedWriter.write("player " + (id+1) + " exits");
+                bufferedWriter.newLine();
+                bufferedWriter.write("player " + (id+1) + " final hand: " + hand.get(0).getValue() + " " + hand.get(1).getValue() + " " + hand.get(2).getValue() + " " + hand.get(3).getValue());
+                bufferedWriter.newLine();
+            }  
 
             bufferedWriter.close();
         } catch (IOException e) {
