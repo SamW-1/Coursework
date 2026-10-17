@@ -12,6 +12,8 @@ public class Player implements Runnable{
     private final Deck leftDeck;
     private final Deck rightDeck;
     private final Queue<Card> nonDenominationCards;
+    public static Boolean gameOver = false;
+    private Boolean pWon = false;
 
     public Player(Deck left, Deck right) {
         hand = new ArrayList<>();
@@ -47,11 +49,13 @@ public class Player implements Runnable{
              * Whereas if the hand is not winning, the player thread atomically carries out the necessary actions:
              *      Draw a card from their left
              *      Discard a card to the right (making sure no non-denomination cards are kept in the hand indefinitely)
+             * 
+             * Implement using a while loop which carries out player actions unless the player has a winning hand (or the thread is stopped otherwise)
              */
-
-            if (hand.get(0) == hand.get(1) && hand.get(1) == hand.get(2) && hand.get(2) == hand.get(3) && hand.get(3) == hand.get(4)) {
-                // Initiate ending of the game
-            } else {
+            
+            pWon = hand.get(0) != hand.get(1) || hand.get(1) != hand.get(2) || hand.get(2) != hand.get(3) || hand.get(3) != hand.get(4);
+            while (!gameOver && !pWon) {
+                
                 // Draw from left
                 // If the drawn card is not of the same value as the player, it is added to the Queue of cards that can be discarded
                 Card drawnCard = leftDeck.drawCard();
@@ -63,22 +67,29 @@ public class Player implements Runnable{
 
                 // Discard to the right
                 for (int i = 0; i < hand.size(); i++) {
-                    if (hand.get(i).equals(nonDenominationCards.peek())) 
-                    { 
+                    if (hand.get(i).equals(nonDenominationCards.peek())) { 
                         rightDeck.addCard(nonDenominationCards.poll()); 
                         Card r = hand.remove(i);
                         bufferedWriter.write("player " + (id+1) + " discards a " + r.getValue() + " to deck " + (rightDeck.getID()+1));
                         bufferedWriter.newLine();
-                        
+
                         break;
                     }
                 }
+            
 
                 // Output current hand 
                 bufferedWriter.write("player " + (id+1) + " current hand is " + hand.get(0).getValue() + " " + hand.get(1).getValue() + " " + hand.get(2).getValue() + " " + hand.get(3).getValue());
 
             }
 
+            /**
+             * Case where current player wins
+             * Break out of current loop and inform other threads that the game is over
+             */
+
+
+            bufferedWriter.close();
         } catch (IOException e) {
             System.out.println("Error writing to file!");
         }

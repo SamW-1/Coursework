@@ -10,16 +10,16 @@ public class Deck {
         id = totalIDs;
         totalIDs++;
     }
-    public int getID() { return id; }
+    public synchronized int getID() { return id; }
 
     public synchronized void addCard(Card card) { cardQueue.add(card); }
 
-    public Card drawCard() { return cardQueue.poll(); }
+    public synchronized Card drawCard() { return cardQueue.poll(); }
 
-    public Card peekCard() { return cardQueue.peek(); }
+    public synchronized Card peekCard() { return cardQueue.peek(); }
 
-    public int size() { return cardQueue.size(); }
+    public synchronized int size() { return cardQueue.size(); }
 
-    public boolean isEmpty() { return cardQueue.isEmpty(); }
+    public synchronized boolean isEmpty() { return cardQueue.isEmpty(); }
 
 }
