@@ -12,8 +12,11 @@ public class Player implements Runnable{
     private final Deck leftDeck;
     private final Deck rightDeck;
     private final Queue<Card> nonDenominationCards;
-    public static Boolean gameOver = false;
-    public static Player winningPlayer;
+
+    // Volatile makes sure the threads can see whether gameOver or winningPlayer have changed
+    // Using volatile, the variable becomes visible to all readers (other threads) immediately after a write operation
+    public static volatile Boolean gameOver = false;
+    public static volatile Player winningPlayer;
     private Boolean pWon = false;
 
     public Player(Deck left, Deck right) {
@@ -54,16 +57,24 @@ public class Player implements Runnable{
              * Implement using a while loop which carries out player actions unless the player has a winning hand (or the thread is stopped otherwise)
              */
             
-            pWon = hand.get(0) == hand.get(1) && hand.get(1) == hand.get(2) && hand.get(2) == hand.get(3) && hand.get(3) == hand.get(4);
+            pWon = hand.get(0).getValue() == hand.get(1).getValue() && hand.get(1).getValue() == hand.get(2).getValue() && hand.get(2).getValue() == hand.get(3).getValue();
             while (!gameOver && !pWon) {
                 // Draw from left
                 // If the drawn card is not of the same value as the player, it is added to the Queue of cards that can be discarded
                 Card drawnCard = leftDeck.drawCard();
+
+                // This block ensures that when a player (thread) attempts to draw a card from the deck to its left, 
+                // If the deck is empty (because other threads have withdrawn cards faster) then onSpinWait signals to the CPU
+                //  that the current thread is waiting but is also doing work (checking whether the game is over) so that the thread gets less processor time
+                if (drawnCard == null) {
+                    Thread.onSpinWait();
+                    continue;
+                }
                 hand.add(drawnCard);
                 if (drawnCard.getValue() != id+1) { nonDenominationCards.add(drawnCard); }
                 bufferedWriter.write("player " + (id+1) + " draws a " + drawnCard.getValue() + " from deck " + (leftDeck.getID()+1));
                 bufferedWriter.newLine();
-
+                
 
                 // Discard to the right
                 for (int i = 0; i < hand.size(); i++) {
@@ -80,15 +91,17 @@ public class Player implements Runnable{
 
                 // Output current hand 
                 bufferedWriter.write("player " + (id+1) + " current hand is " + hand.get(0).getValue() + " " + hand.get(1).getValue() + " " + hand.get(2).getValue() + " " + hand.get(3).getValue());
-                System.out.println("player " + (id+1) + " current hand is " + hand.get(0).getValue() + " " + hand.get(1).getValue() + " " + hand.get(2).getValue() + " " + hand.get(3).getValue());
+                bufferedWriter.newLine();
 
+                pWon = hand.get(0).getValue() == hand.get(1).getValue() && hand.get(1).getValue() == hand.get(2).getValue() && hand.get(2).getValue() == hand.get(3).getValue();
             }
 
             /**
              * Case where current player wins
              * Break out of current loop and inform other threads that the game is over
              */
-            if (pWon) {
+            if (pWon && !gameOver) {
+
                 winningPlayer = this;
                 gameOver = true;
 
@@ -98,9 +111,18 @@ public class Player implements Runnable{
                 bufferedWriter.newLine();
                 bufferedWriter.write("player " + (id+1) + " final hand: " + hand.get(0).getValue() + " " + hand.get(1).getValue() + " " + hand.get(2).getValue() + " " + hand.get(3).getValue());
                 bufferedWriter.newLine();
-            }  
 
-            bufferedWriter.close();
+                System.out.println("player" + (id+1) + " wins");
+            } else if (gameOver) {
+
+                bufferedWriter.write("player " + (winningPlayer.getID()+1) + " informed player " + (id+1) + " that player " + (winningPlayer.getID()+1) + " has won");
+                bufferedWriter.newLine();
+                bufferedWriter.write("player " + (id+1) + " exits");
+                bufferedWriter.newLine();
+                bufferedWriter.write("player " + (id+1) + " hand: " + hand.get(0).getValue() + " " + hand.get(1).getValue() + " " + hand.get(2).getValue() + " " + hand.get(3).getValue());
+                bufferedWriter.newLine();
+            }  
+            
         } catch (IOException e) {
             System.out.println("Error writing to file!");
         }
