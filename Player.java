@@ -37,16 +37,6 @@ public class Player implements Runnable{
         hand.add(c);
         if (c.getValue() != id+1) { nonDenominationCards.add(c); }
     }
-    public void discard() {
-        // Implement logic to decide and discard the correct card
-    }
-    public void printCards() {
-        for (int i = 0; i < hand.size(); i++) {
-            System.out.print(hand.get(i).getValue());
-            System.out.print(' ');
-        }
-        System.out.println();
-    }
     public ArrayList<Card> getHand() { return hand; } 
     
     @Override
@@ -68,9 +58,11 @@ public class Player implements Runnable{
                 // If the drawn card is not of the same value as the player, it is added to the Queue of cards that can be discarded
                 Card drawnCard = leftDeck.drawCard();
 
-                // This block ensures that when a player (thread) attempts to draw a card from the deck to its left, 
-                // If the deck is empty (because other threads have withdrawn cards faster) then onSpinWait signals to the CPU
-                //  that the current thread is waiting but is also doing work (checking whether the game is over) so that the thread gets less processor time
+                /**
+                 * This block ensures that when a player (thread) attempts to draw a card from the deck to its left, 
+                 *   If the deck is empty (because other threads have withdrawn cards faster) then onSpinWait signals to the CPU
+                 *   that the current thread is waiting but is also doing work (checking whether the game is over) so that the thread gets less processor time
+                 */
                 if (drawnCard == null) {
                     Thread.onSpinWait();
                     continue;

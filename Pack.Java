@@ -33,22 +33,4 @@ public class Pack {
             i++;
         }
     }
-    // public static void main(String[] args) {
-    //     Pack demo = new Pack();
-    //     for (int i = 0; i < 40; i++) {
-    //         demo.addCard(new Card(i));
-    //     }
-
-    //     Player[] pl = new Player[4];
-    //     pl[0] = new Player();
-    //     pl[1] = new Player();
-    //     pl[2] = new Player();
-    //     pl[3] = new Player();
-
-    //     demo.distribute(pl);
-        
-    //     for (int i = 0; i < 4; i++) {
-    //         pl[i].printCards();
-    //     }
-    // }
 }

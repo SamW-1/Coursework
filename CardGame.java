@@ -18,9 +18,24 @@ public class CardGame {
 
         Scanner sc = new Scanner(System.in);
 
+        /**
+         * This block takes the user input for the number of players
+         * The try catch within the while loop ensures that the user input is retaken if it is not a valid integer
+         */
         System.out.println("Please enter the number of players:");
-        int playerCount = Integer.parseInt(sc.nextLine());
+        boolean valid = false;
+        int playerCount = 0;
+        while (!valid) {
+            try {
+                playerCount = Integer.parseInt(sc.nextLine());
+                valid = true;
+            } catch (NumberFormatException e) {
+                System.out.println("Please enter a valid number of players:");
+            }
+        }
+        
 
+        // Decks and players are initialised based off of the number of platers inputted by the user
         Deck[] deckList = new Deck[playerCount];
         for (int i = 0; i < playerCount; i++) { deckList[i] = new Deck(); }
 
@@ -31,35 +46,45 @@ public class CardGame {
         }
 
         
-
+        // Similarly to the number of players, the input pack is repeatedly asked for until it is valid
+        //  (it is both a valid text file location and consists of only lines of integers)
         System.out.println("Enter the location of a pack to load:");
-        String filename = sc.nextLine();
+        valid = false;
+        Pack pack = null;
+        while (!valid) {
+            String filename = sc.nextLine();
+            pack = new Pack();
+            
+            try (BufferedReader input = new BufferedReader(new FileReader(filename))) {  
+                // Error handling here needs to be completed: So that invalid file input exceptions are properly handled
+                String line = input.readLine();
 
-        Pack pack = new Pack();
-        try (BufferedReader input = new BufferedReader(new FileReader(filename))) {  
-            // Error handling here needs to be completed: So that invalid file input exceptions are properly handled
-            String line = input.readLine();
+                while (line != null) {
+                    Card c = new Card(Integer.parseInt(line));
+                    pack.addCard(c);
+                    
+                    line = input.readLine();
+                }
 
-            while (line != null) {
-                Card c = new Card(Integer.parseInt(line));
-                pack.addCard(c);
-                
-                line = input.readLine();
+                valid = true;
+            } catch (IOException e) {
+                System.out.println("Enter a valid location of a pack to load");
+            } catch (NumberFormatException e) {
+                System.out.println("Enter the location of a valid pack to load");
             }
+        }
 
-            input.close();
-
+        
         // Distribute cards from the top of the pack in a round robin fashion to the players and decks
         pack.distribute(players, deckList);
         
-        // Initialise player text files 
+        // Create player text files, outputting initial hand card values
         for (int i = 0; i < playerCount; i++) {
             try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter("player" + (i+1) + ".txt"))) {
                 ArrayList<Card> initialHand = players[i].getHand();
                 bufferedWriter.write("player " + (i+1) + " initial hand " + initialHand.get(0).getValue() + " " + initialHand.get(1).getValue() + " " + initialHand.get(2).getValue() + " " + initialHand.get(3).getValue());
                 bufferedWriter.newLine();
 
-                bufferedWriter.close();
             } catch (IOException e) {
                 System.out.println("Error creating file!");
             }
@@ -73,15 +98,21 @@ public class CardGame {
             thread.start();
         }
 
+        // Create n deck output files, outputting the contents of each deck into its respective text file
+        for (int i = 0; i < deckList.length; i++) {
+            try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter("deck" + (i+1) + "_output.txt"))) {
+                ArrayList<Card> contents = new ArrayList<>();
+                while (!deckList[i].isEmpty()) {
+                    contents.add(deckList[i].drawCard());
+                }
+                bufferedWriter.write("deck" + (i+1) + " contents: ");
+                for (Card c : contents) {
+                    bufferedWriter.write(c.getValue() + " ");
+                }
 
-        } catch (IOException e) {
-            System.out.println("Error: File not found.");
-        } catch (NumberFormatException e) {
-            System.out.println("Error: Invalid file contents");
+            } catch (IOException e) {
+                System.out.println("Error creating file!");
+            }
         }
-
-        
-
-
     }
 }
