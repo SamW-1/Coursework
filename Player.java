@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Queue;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class Player implements Runnable{
     private static int totalIDs;
@@ -15,7 +16,11 @@ public class Player implements Runnable{
 
     // Volatile makes sure the threads can see whether gameOver or winningPlayer have changed
     // Using volatile, the variable becomes visible to all readers (other threads) immediately after a write operation
-    public static volatile Boolean gameOver = false;
+
+    // As well as this, AtomicBoolean is used to ensure that gameOver is checked and set in the same atomic action
+    //  when a player has won the game to remove the possibility of another thread winning in the time between getting 
+    //  and setting sequentially
+    public static volatile AtomicBoolean gameOver = new AtomicBoolean(false);
     public static volatile Player winningPlayer;
     private Boolean pWon = false;
 
@@ -58,7 +63,7 @@ public class Player implements Runnable{
              */
             
             pWon = hand.get(0).getValue() == hand.get(1).getValue() && hand.get(1).getValue() == hand.get(2).getValue() && hand.get(2).getValue() == hand.get(3).getValue();
-            while (!gameOver && !pWon) {
+            while (!gameOver.get() && !pWon) {
                 // Draw from left
                 // If the drawn card is not of the same value as the player, it is added to the Queue of cards that can be discarded
                 Card drawnCard = leftDeck.drawCard();
@@ -99,11 +104,13 @@ public class Player implements Runnable{
             /**
              * Case where current player wins
              * Break out of current loop and inform other threads that the game is over
+             * 
+             * Otherwise, gameOver has been set by another thread (another thread has won) so 
+             *  the current thread has lost, carrying out the required processes for that
              */
-            if (pWon && !gameOver) {
+            if (pWon && gameOver.compareAndSet(false, true)) {
 
                 winningPlayer = this;
-                gameOver = true;
 
                 bufferedWriter.write("player " + (id+1) + " wins");
                 bufferedWriter.newLine();
@@ -113,7 +120,7 @@ public class Player implements Runnable{
                 bufferedWriter.newLine();
 
                 System.out.println("player" + (id+1) + " wins");
-            } else if (gameOver) {
+            } else {
 
                 bufferedWriter.write("player " + (winningPlayer.getID()+1) + " informed player " + (id+1) + " that player " + (winningPlayer.getID()+1) + " has won");
                 bufferedWriter.newLine();
