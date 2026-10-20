@@ -47,7 +47,7 @@ public class CardGame {
 
         
         // Similarly to the number of players, the input pack is repeatedly asked for until it is valid
-        //  (it is both a valid text file location and consists of only lines of integers)
+        //  (it is both a valid text file location and consists of only 8n lines of integers)
         System.out.println("Enter the location of a pack to load:");
         valid = false;
         Pack pack = null;
@@ -56,17 +56,21 @@ public class CardGame {
             pack = new Pack();
             
             try (BufferedReader input = new BufferedReader(new FileReader(filename))) {  
-                // Error handling here needs to be completed: So that invalid file input exceptions are properly handled
                 String line = input.readLine();
-
+                int count = 0;
                 while (line != null) {
                     Card c = new Card(Integer.parseInt(line));
                     pack.addCard(c);
                     
                     line = input.readLine();
+                    count++;
                 }
-
-                valid = true;
+                if (count == 8*playerCount) { 
+                    valid = true; 
+                } else {
+                    System.out.println("Enter the location of a valid pack to load (must have 8n rows)");
+                }
+                
             } catch (IOException e) {
                 System.out.println("Enter a valid location of a pack to load");
             } catch (NumberFormatException e) {
